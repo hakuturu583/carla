@@ -1,0 +1,50 @@
+======================================================================
+CARLA UE5 - Project Chrono runtime check
+======================================================================
+client / server version : 0.10.0 / 0.10.0
+map                     : Carla/Maps/Town10HD_Opt
+tick                    : synchronous, fixed_delta_seconds=0.02
+templates (base_path)   : /mnt/sata_ssd/carla/Co-Simulation/Chrono/Vehicles/
+
+API surface on carla.Vehicle:
+  enable_chrono_physics   : True
+  restore_physx_physics   : True
+
+spawned                 : vehicle.lincoln.mkz
+settled at              : (-24.34, -57.78, -0.06)
+
+----------------------------------------------------------------------
+enable_chrono_physics(5000, 0.002, Sedan_Vehicle / SimpleMapPowertrain / TMeasyTire)
+----------------------------------------------------------------------
+    t  0  speed   0.19 km/h   loc (  -24.35,   -57.78,  -0.09)
+    t 25  speed   7.25 km/h   loc (  -23.88,   -57.78,  -0.08)
+    t 50  speed  15.47 km/h   loc (  -22.25,   -57.76,  -0.09)
+    t 75  speed  22.33 km/h   loc (  -19.65,   -57.74,  -0.10)
+    t100  speed  28.19 km/h   loc (  -16.09,   -57.70,  -0.08)
+    t125  speed  33.11 km/h   loc (  -11.84,   -57.67,  -0.06)
+    t149  speed  38.55 km/h   loc (   -7.07,   -57.64,  -0.06)
+  travelled 17.29 m, final speed 38.55 km/h
+  collision fallback triggered: False
+  server log | [2026.09.03-00.55.46:036][349]LogCarla: Loading Chrono files: Vehicle: /mnt/sata_ssd/carla/Co-Simulation/Chrono/Vehicles/sedan/vehicle/Sedan_Vehicle.j
+  server log | Loaded JSON: /mnt/sata_ssd/carla/Co-Simulation/Chrono/Vehicles/sedan/vehicle/Sedan_Vehicle.json
+
+----------------------------------------------------------------------
+restore_physx_physics()
+----------------------------------------------------------------------
+    t  0  speed  41.89 km/h   loc (   -4.64,   -57.62,  -0.05)
+    t 25  speed  55.85 km/h   loc (    2.14,   -57.57,  -0.05)
+    t 50  speed  66.41 km/h   loc (   10.83,   -57.50,  -0.07)
+    t 75  speed  66.87 km/h   loc (   20.06,   -57.43,  -0.05)
+    t100  speed  69.42 km/h   loc (   29.53,   -57.36,  -0.00)
+    t125  speed  71.94 km/h   loc (   39.32,   -57.28,  -0.06)
+    t149  speed  75.14 km/h   loc (   49.13,   -57.21,  -0.07)
+  travelled 54.01 m, final speed 75.14 km/h
+
+camera frame            : chrono_vehicle.png (1280x720)
+
+======================================================================
+RESULT
+  under Chrono physics  :  17.29 m,  38.55 km/h, no collision fallback
+  after restore         :  54.01 m,  75.14 km/h
+  verdict               : PASS
+======================================================================
