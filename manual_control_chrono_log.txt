@@ -1,0 +1,44 @@
+======================================================================
+manual_control_chrono.py - runtime verification
+======================================================================
+date        : 2026-09-04T11:35:38+09:00
+CARLA       : ue5-dev + PR #9861, built with -DENABLE_CHRONO=ON
+server      : UnrealEditor -game -vulkan -RenderOffScreen (headless)
+display     : Xvfb :99 1280x720x24, keys injected with xdotool
+map         : Town10HD_Opt      vehicle: vehicle.lincoln.mkz
+
+--- file provenance ------------------------------------------------
+manual_control.py         sha256 669e1156ea05f5c22b35b4147524d1d0c365ca29832685a50ef660507868e4ff
+  + Chrono delta (+23/-1 lines, 5 hunks)
+manual_control_chrono.py  sha256 2acc301bd7a4bb8809454b49d80baa53280a69f6ad4b180dfa5eeaf459e2abfb
+rebuilt from base+delta   sha256 2acc301bd7a4bb8809454b49d80baa53280a69f6ad4b180dfa5eeaf459e2abfb  -> IDENTICAL
+
+--- scripted session -----------------------------------------------
+  ===== attempt 4/10 =====
+    window 2097160
+    CHRONO HELD - recording this session
+    >>> throttle 6s under Chrono
+    still under Chrono after the drive
+    >>> CTRL+O : restore default physics
+    >>> throttle 6s under default
+    screenshot ok
+  SUCCESS_ATTEMPT=4
+  DRIVER_DONE=0
+
+--- client output --------------------------------------------------
+  INFO: listening to server 127.0.0.1:2000
+  pygame 2.6.1 (SDL 2.28.4, Python 3.10.19)
+  Hello from the pygame community. https://www.pygame.org/contribute.html
+  Allows controlling a vehicle with a keyboard, with Project Chrono vehicle dynamics.
+  
+  Requires a server built with -DENABLE_CHRONO=ON. See Docs/tuto_G_chrono.md.
+  
+
+--- server log, Chrono events for the recorded session --------------
+  [2026.09.04-02.33.55:672][ 52]LogCarla: Loading Chrono files: Vehicle: /mnt/sata_ssd/carla/Co-Simulation/Chrono/Vehicles/sedan/vehicle/Sedan_Vehicle.json, PowerTrain: /mnt/sata_ssd/carla/Co-Simulation/Chrono/Vehicles/sedan/powertrain/Sedan_SimpleMapPowertrain.json, Tire: /mnt/sata_ssd/carla/Co-Simulation/Chrono/Vehicles/sedan/tire/Sedan_TMeasyTire.json
+  Loaded JSON: /mnt/sata_ssd/carla/Co-Simulation/Chrono/Vehicles/sedan/vehicle/Sedan_Vehicle.json
+
+  Note: no 'reverting to default PhysX physics' line follows the final
+  enable. The example toggled Chrono OFF via restore_physx_physics() and
+  the collision warning is correctly not emitted for that path (the
+  warning was moved back to the collision handlers, matching ue4-dev).
