@@ -15,6 +15,7 @@
 #include "Engine/PostProcessVolume.h"
 #include "EngineUtils.h"
 #include "GameFramework/SpectatorPawn.h"
+#include "Misc/App.h"
 #include "SceneManagement.h"
 #include <util/ue-header-guard-end.h>
 
@@ -1116,6 +1117,28 @@ void ASceneCaptureSensor::BeginPlay()
       TEXT("SceneCaptureReadback"));
 
   Super::BeginPlay();
+
+  if (!FApp::CanEverRender())
+  {
+    // -nullrhi: the render target has no RHI resource, so there is nothing to
+    // capture or read back. Every camera subclass drives both from
+    // PrePhysTick/PostPhysTick, which ASensor::Tick feeds, so stopping the
+    // actor tick makes all of them inert with no per-subclass checks.
+    SetActorTickEnabled(false);
+
+    // On a multi-GPU primary (the documented -nullrhi use) the secondaries
+    // render this camera, so only warn when nobody else will deliver frames.
+    auto *GameInstance = UCarlaStatics::GetGameInstance(GetWorld());
+    const bool bRenderedBySecondaries = GameInstance != nullptr &&
+        GameInstance->GetCarlaEngine()->GetSecondaryServer()->HasClientsConnected();
+    if (!bRenderedBySecondaries)
+    {
+      UE_LOG(LogCarla, Warning, TEXT(
+          "%s: the server runs without an RHI (-nullrhi); this camera sensor "
+          "will not deliver any frame. Start the server with -RenderOffScreen "
+          "to get images."), *GetName());
+    }
+  }
 }
 
 bool ASceneCaptureSensor::IsAnyGBufferClientListening() const

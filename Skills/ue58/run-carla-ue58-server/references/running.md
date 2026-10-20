@@ -60,7 +60,7 @@ tree.
 | `-carla-streaming-port=N` | sensor streaming port (conventionally RPC+1) |
 | `-carla-primary-host=` / `-carla-primary-port=` | multi-server (primary/secondary) |
 | `-RenderOffScreen` | render without a window — the headless default |
-| `-nullrhi` | no RHI at all. **Crashes on any camera sensor** |
+| `-nullrhi` | no RHI at all (CPU-only). **Camera sensors deliver no images** |
 | `-vulkan` | RHI selection; matches `CARLA_UNREAL_RHI` |
 | `-quality-level=Low\|Epic` | scalability |
 | `-ros2` | native ROS 2 (single dash on 5.8) |
@@ -73,6 +73,22 @@ Parsed in `Plugins/Carla/Source/Carla/Settings/CarlaSettings.cpp`.
 
 ## `-nullrhi` and cameras
 
+Without an RHI (`FApp::CanEverRender()` false), `UTextureRenderTarget2D` never
+gets a resource, so a camera has nothing to capture or read back.
+`ASceneCaptureSensor::BeginPlay` therefore disables the actor tick, which
+makes every camera type inert (they all capture and read back from
+`PrePhysTick`/`PostPhysTick`), and logs one warning per camera. The readback
+entry points (`ImageUtil::ReadImageDataBegin`,
+`CameraModelUtil::DistortCubemapToImage`) also return early on a null resource.
+The camera actor exists and can be attached and destroyed; it just never sends
+a frame.
+
+Multi-GPU is the exception: on a `-nullrhi` primary server with secondaries
+connected, the secondaries render the camera and deliver its frames, so the
+warning is not logged there.
+
+Before those guards the same scenario crashed the server:
+
 ```
 [24]LogCarla: Spawning actor 'sensor.camera.rgb'
 CommonUnixCrashHandler: Signal=11
@@ -84,9 +100,8 @@ libUnrealEditor-Carla.so!ImageUtil::ReadImageDataBegin(
   <- render thread, via ImageUtil::ReadImageDataAsync (ImageUtil.cpp:428)
 ```
 
-`ImageUtil.cpp` and `RHIGPUReadbackPool.h` are UE5.8-era additions to the sensor
-path, so this is not inherited UE4 behaviour. Non-image sensors, traffic, physics
-and waypoint work are all fine under `-nullrhi`.
+Non-image sensors, traffic, physics and waypoint work are all fine under
+`-nullrhi`.
 
 ## Packaged vs game: measured
 

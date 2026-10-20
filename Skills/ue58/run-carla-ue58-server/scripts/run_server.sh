@@ -85,13 +85,10 @@ common_args() {
       ARGS+=(-windowed)
     fi
   elif [ "${NULLRHI:-0}" = "1" ]; then
-    # No RHI at all. Fastest start, but do NOT spawn a camera on a -nullrhi
-    # server: there is no render target, ImageUtil::ReadImageDataBegin
-    # (Sensor/ImageUtil.cpp:224) dereferences null on the render thread and the
-    # whole server dies with SIGSEGV at 0x58. Verified on ue58-dev.
-    echo "[run] WARNING -nullrhi: spawning ANY camera sensor will CRASH this server"
-    echo "[run] WARNING   (ImageUtil::ReadImageDataBegin null render target, SIGSEGV)."
-    echo "[run] WARNING   Use the default -RenderOffScreen for anything with cameras."
+    # No RHI at all (CPU-only server). Fastest start; camera sensors deliver no
+    # frames. See SKILL.md.
+    echo "[run] NOTE -nullrhi: camera sensors deliver NO images on this server."
+    echo "[run] NOTE   Use the default -RenderOffScreen for anything with cameras."
     ARGS+=(-nullrhi)
   else
     ARGS+=(-RenderOffScreen)

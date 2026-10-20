@@ -734,20 +734,27 @@ namespace CameraModelUtil
         FRHISamplerState* Sampler,
         const FDistortCubemapToImageOptions& Options)
     {
+        // The resource is null under -nullrhi (see ImageUtil::ReadImageDataBegin).
+        auto GetTextureRHI = [](UTextureRenderTarget2D* RenderTarget) -> FRHITexture*
+        {
+            auto Resource = RenderTarget->GetRenderTargetResource();
+            if (Resource == nullptr)
+                return nullptr;
+            return Resource->GetTextureRenderTarget2DResource()->GetTextureRHI();
+        };
+
         FTextureRHIRef TextureRHIs[6] = {};
 
         for (uint8 i = 0; i != 6; ++i)
         {
-            TextureRHIs[i] = CubeRenderTargets[i]
-                ->GetRenderTargetResource()
-                ->GetTextureRenderTarget2DResource()
-                ->GetTextureRHI();
+            TextureRHIs[i] = GetTextureRHI(CubeRenderTargets[i]);
+            if (!TextureRHIs[i].IsValid())
+                return;
         }
 
-        auto DestinationRHI = Destination
-            ->GetRenderTargetResource()
-            ->GetTextureRenderTarget2DResource()
-            ->GetTextureRHI();
+        auto DestinationRHI = GetTextureRHI(Destination);
+        if (DestinationRHI == nullptr)
+            return;
 
         TRefCountPtr<IPooledRenderTarget> PRTs[] =
         {

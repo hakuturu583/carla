@@ -219,8 +219,12 @@ namespace ImageUtil
     ReadImageDataAsyncCallback&& Callback)
   {
     auto& CmdList = FRHICommandListImmediate::Get();
+    // Under -nullrhi (FApp::CanEverRender() false) UTexture::UpdateResource
+    // never creates the RHI resource, so this is null.
     auto Resource = static_cast<FTextureRenderTarget2DResource*>(
       RenderTarget.GetResource());
+    if (Resource == nullptr)
+      return;
     auto Texture = Resource->GetRenderTargetTexture();
     if (Texture == nullptr)
       return;

@@ -71,7 +71,7 @@ PORT=3000 DETACH=1 bash scripts/run_server.sh game
 | `TRACE=1` | keep UnrealTrace enabled under `WINDOW=1` |
 | `RES=WxH` | window size, `WINDOW=1` only (e.g. `RES=1920x1080`) |
 | `FULLSCREEN=1` | exclusive fullscreen, `WINDOW=1` only; default is `-windowed` |
-| `NULLRHI=1` | no RHI at all — **see the warning below** |
+| `NULLRHI=1` | no RHI at all (CPU-only) — cameras deliver no images, **see below** |
 | `QUALITY=Low` | `-quality-level=Low` |
 | `EXTRA=` | anything else |
 
@@ -115,19 +115,21 @@ and `TRACE=1` puts it back. If a launch still dies this way, clear the daemon:
 pkill -f "[U]nrealTraceServer"
 ```
 
-### `NULLRHI=1` will crash the server if you spawn a camera
+### `NULLRHI=1`: cameras spawn but deliver no images
 
-Not "produces no images" — **crashes**. With no RHI there is no render target, so
-the camera readback path dereferences null on the render thread:
+A camera spawned on a `-nullrhi` server exists, can be attached and destroyed,
+but never ticks: client `listen()` callbacks on it never fire, and the server
+logs once per camera:
 
 ```
-Unhandled Exception: SIGSEGV: invalid attempt to read memory at address 0x58
-libUnrealEditor-Carla.so!ImageUtil::ReadImageDataBegin(...)
-    [Plugins/Carla/Source/Carla/Sensor/ImageUtil.cpp:224]
+LogCarla: Warning: SceneCaptureCamera_...: the server runs without an RHI (-nullrhi);
+    this camera sensor will not deliver any frame. ...
 ```
 
-Measured on this branch. `-nullrhi` is fine for traffic, physics, waypoints and
-non-image sensors; use the default `-RenderOffScreen` for anything with a camera.
+`-nullrhi` is fine for traffic, physics, waypoints and non-image sensors; use the
+default `-RenderOffScreen` for anything with a camera. The mechanism, the
+multi-GPU exception and the crash older builds had instead are in
+[references/running.md](references/running.md#-nullrhi-and-cameras).
 
 ### Step 4: Probe
 
@@ -265,8 +267,8 @@ given the untruncated process name.
 Solution: `bash scripts/run_server.sh stop`. The preflight refuses to launch onto
 a busy port and prints both remedies.
 
-**Problem: the server dies the moment a camera is spawned**
-Cause: `-nullrhi`. See the warning above.
+**Problem: a camera never delivers an image**
+Cause: `-nullrhi`. See the section above.
 Solution: drop `NULLRHI=1`.
 
 **Problem: `The global shader cache file ... is missing. Your application is built to load COOKED content`**

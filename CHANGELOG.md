@@ -112,6 +112,7 @@
 * Fixed the `noise_seed` attribute of `sensor.lidar.ray_cast` being ignored, so every ray-cast LiDAR used the default seed.
 * Fixed the IMU sensor's compass yaw orientation, and the order in which sensors are disposed when their parent actor is destroyed.
 * Fixed several legacy UE4-era bugs across LibCarla and the Carla plugin: LiDAR memory reset, DVS validation, camera profiling, image reads, sensor materials and Python sensor teardown.
+* Fixed a server launched with `-nullrhi` (CPU-only, no GPU) crashing with a null dereference on the render thread as soon as a camera sensor was spawned. Camera sensors now stop ticking when there is no RHI, log a warning, and deliver no frames; every other sensor keeps working, and a multi-GPU primary still hands its cameras to the secondaries.
 
 #### Traffic Manager and agents
 

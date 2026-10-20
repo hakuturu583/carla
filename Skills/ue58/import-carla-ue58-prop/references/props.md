@@ -121,8 +121,8 @@ Three behaviours to design around:
    `LogInterchangeEngine: Interchange start importing source [...]`. The legacy
    `AssetImportTask` + `FbxImportUI` objects still drive it correctly.
 
-`-nullrhi` is safe here: no camera sensor is involved. (It is *not* safe for a
-running server — see [[run-carla-ue58-server]].)
+`-nullrhi` is safe here: no camera sensor is involved. (On a running server it
+means cameras deliver no images — see [[run-carla-ue58-server]].)
 
 ### API changes hit on 5.8
 
