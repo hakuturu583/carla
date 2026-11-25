@@ -7,7 +7,7 @@ TODO before posting:
   1. (done) Prototype pushed: hakuturu583/carla@e0f4fb1.
   2. Run gnss_skyplot.py against a real server (e.g. Town10HD, --draw-rays)
      and attach that sky plot + an in-simulator screenshot of the rays.
-     The attached canyon.png is from a SYNTHETIC test scene.
+     The canyon sky plot is from a SYNTHETIC test scene.
   3. Search Discussions for "GNSS" / "GPS" first (the REST search of issues
      and PRs found nothing related; Discussions could not be searched).
 -->
@@ -65,10 +65,10 @@ The sensor would report per-satellite results, for example `GnssMeasurement.sate
   - BeiDou GEO satellites land on their nominal slots.
   - The ray geometry is checked against a fake world containing a building.
 
-![sky plot, synthetic street canyon](canyon.png)
+![sky plot, synthetic street canyon](https://raw.githubusercontent.com/hakuturu583/carla/7b56a25/PythonAPI/examples/gnss/proposal/canyon.png)
 *Synthetic test scene, not a CARLA map: a 15 m wide north–south street between 30 m buildings. Only the north–south strip of sky stays in line of sight.*
 
-![sky plot above Tokyo, no occlusion](tokyo.png)
+![sky plot above Tokyo, no occlusion](https://raw.githubusercontent.com/hakuturu583/carla/7b56a25/PythonAPI/examples/gnss/proposal/tokyo.png)
 *Orbit part only (`--offline 35.681,139.767,40`): every satellite above a 5° mask over Tokyo at 2026-03-31 14:00 UTC, with the quasi-zenith QZSS J04 near the centre.*
 
 <!-- TODO: real-map sky plot + in-simulator ray screenshot here -->
