@@ -146,3 +146,10 @@ These are deliberate in a prototype and are the next steps:
   open sky. Use an elevation mask.
 * One `cast_ray` RPC per satellite per update, about 40, is fine for a
   prototype. A sensor would do this on the server.
+
+## Proposal
+
+[`proposal/discussion.md`](proposal/discussion.md) is the draft of the
+GitHub Discussion that proposes taking this into the simulator: phases, the
+Python API sketch, the modules involved and the questions for the
+maintainers.
