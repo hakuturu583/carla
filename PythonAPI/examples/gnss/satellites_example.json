@@ -1,0 +1,8 @@
+{
+  "satellites": [
+    {"id": "X01", "azimuth": 90.0, "elevation": 15.0},
+    {"id": "X02", "azimuth": 270.0, "elevation": 15.0},
+    {"id": "X03", "azimuth": 0.0, "elevation": 89.0},
+    {"id": "G99", "ecef": [-14657587.6, 18534937.6, 11217467.7]}
+  ]
+}
